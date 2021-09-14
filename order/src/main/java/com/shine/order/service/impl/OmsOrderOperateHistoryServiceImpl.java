@@ -1,0 +1,29 @@
+package com.shine.order.service.impl;
+
+import org.springframework.stereotype.Service;
+import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shine.common.utils.PageUtils;
+import com.shine.common.utils.Query;
+
+import com.shine.order.dao.OmsOrderOperateHistoryDao;
+import com.shine.order.entity.OmsOrderOperateHistoryEntity;
+import com.shine.order.service.OmsOrderOperateHistoryService;
+
+
+@Service("omsOrderOperateHistoryService")
+public class OmsOrderOperateHistoryServiceImpl extends ServiceImpl<OmsOrderOperateHistoryDao, OmsOrderOperateHistoryEntity> implements OmsOrderOperateHistoryService {
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage<OmsOrderOperateHistoryEntity> page = this.page(
+                new Query<OmsOrderOperateHistoryEntity>(params).getPage(),
+                new QueryWrapper<OmsOrderOperateHistoryEntity>()
+        );
+
+        return new PageUtils(page);
+    }
+
+}

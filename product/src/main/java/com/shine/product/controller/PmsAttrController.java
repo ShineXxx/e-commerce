@@ -1,20 +1,17 @@
 package com.shine.product.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
+import com.shine.product.feign.OrderRemoteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.shine.product.entity.PmsAttrEntity;
 import com.shine.product.service.PmsAttrService;
 import com.shine.common.utils.PageUtils;
 import com.shine.common.utils.R;
-
 
 
 /**
@@ -29,34 +26,37 @@ import com.shine.common.utils.R;
 public class PmsAttrController {
     @Autowired
     private PmsAttrService pmsAttrService;
+    @Autowired
+    private OrderRemoteService orderRemoteService;
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
+    @GetMapping("/list")
+    public R list() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("limit", 1);
+        params.put("page", 1);
         PageUtils page = pmsAttrService.queryPage(params);
-
-        return R.ok().put("page", page);
+        return R.ok().put("page", page).put("order-list", orderRemoteService.list(params));
     }
 
 
     /**
      * 信息
      */
-    @RequestMapping("/info/{attrId}")
-    public R info(@PathVariable("attrId") Long attrId){
-		PmsAttrEntity pmsAttr = pmsAttrService.getById(attrId);
-
+    @GetMapping("/info/{attrId}")
+    public R info(@PathVariable("attrId") Long attrId) {
+        PmsAttrEntity pmsAttr = pmsAttrService.getById(attrId);
         return R.ok().put("pmsAttr", pmsAttr);
     }
 
     /**
      * 保存
      */
-    @RequestMapping("/save")
-    public R save(@RequestBody PmsAttrEntity pmsAttr){
-		pmsAttrService.save(pmsAttr);
+    @PostMapping("/save")
+    public R save(@RequestBody PmsAttrEntity pmsAttr) {
+        pmsAttrService.save(pmsAttr);
 
         return R.ok();
     }
@@ -64,9 +64,9 @@ public class PmsAttrController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-    public R update(@RequestBody PmsAttrEntity pmsAttr){
-		pmsAttrService.updateById(pmsAttr);
+    @PostMapping("/update")
+    public R update(@RequestBody PmsAttrEntity pmsAttr) {
+        pmsAttrService.updateById(pmsAttr);
 
         return R.ok();
     }
@@ -74,9 +74,9 @@ public class PmsAttrController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] attrIds){
-		pmsAttrService.removeByIds(Arrays.asList(attrIds));
+    @GetMapping("/delete")
+    public R delete(@RequestBody Long[] attrIds) {
+        pmsAttrService.removeByIds(Arrays.asList(attrIds));
 
         return R.ok();
     }
